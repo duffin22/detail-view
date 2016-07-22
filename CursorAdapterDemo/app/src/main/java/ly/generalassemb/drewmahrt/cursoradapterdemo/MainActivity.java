@@ -1,18 +1,16 @@
 package ly.generalassemb.drewmahrt.cursoradapterdemo;
 
-import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+
+import java.util.List;
 
 import ly.generalassemb.drewmahrt.cursoradapterdemo.setup.DBAssetHelper;
 
@@ -29,13 +27,27 @@ public class MainActivity extends AppCompatActivity {
 
         ListView listView = (ListView)findViewById(R.id.example_list_view);
 
-        ExampleSQLiteOpenHelper helper = new ExampleSQLiteOpenHelper(MainActivity.this);
+        ExampleSQLiteOpenHelper helper = ExampleSQLiteOpenHelper.getInstance(MainActivity.this);
 
-        Cursor cursor = helper.getExampleList();
+        List<GroceryItem> items = helper.getExampleList();
 
-        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(MainActivity.this,android.R.layout.simple_list_item_1,cursor,new String[]{ExampleSQLiteOpenHelper.COL_ITEM_NAME},new int[]{android.R.id.text1},0);
+        final ArrayAdapter<GroceryItem> simpleAdapter1 = new ArrayAdapter<GroceryItem>(MainActivity.this, android.R.layout.simple_list_item_1, items);
 
-        listView.setAdapter(simpleCursorAdapter);
+        //SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(MainActivity.this,android.R.layout.simple_list_item_1,cursor,new String[]{ExampleSQLiteOpenHelper.COL_ITEM_NAME},new int[]{android.R.id.text1},0);
+
+        listView.setAdapter(simpleAdapter1);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent =  new Intent(MainActivity.this,DetailActivity.class);
+                //cursor.moveToPosition(position);
+                intent.putExtra("id",position);
+                startActivity(intent);
+            }
+        });
 
     }
+
+
 }
